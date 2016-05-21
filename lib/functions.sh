@@ -2,53 +2,78 @@
 
 # demander si besoin d'indice et stocker indice = true
 # apprendre ctrl-a et ctrl-e et flèche du haut pour revenir aux commandes précédentes
-
 function start_test(){
-echo -e $green"HELLO SIMPLONIEN \n"$reset_color$bold
+    echo -e $green"HELLO SIMPLONIEN \n"$reset_color$bold
+    menu
+}
 
-    echo -e "Quel robot lancer ?"
-    echo -e "Niveau 1 : "
-    echo -e "$green- 01 - Se déplacer et se retrouver ( cd , pwd, ls )"
-    echo -e "- 02 - Les fichiers et dossiers ( nano, mkdir, touch )"
-    echo -e "- 03 - Gestion des droits ( chmod , chown )"
-    echo -e "- 04 - Renommer, copier, déplacer et supprimer ( rename, cp, mv, rm )"
-    echo -e "- 05 - Télécharger des fichiers ( wget, curl )$reset_color$bold"
-
-    echo -e "Niveau 2:"
-    echo -e "- 06 - Utilisez l'historique pour gagner du temps ( history, flèches haut/bas, point d'exclamation)"
-    echo -e "- 07 - Espace disque et mémoire vive ( df, du, free )"
-    echo -e "- 08 - Filtrer ( grep )"
-    echo -e "- 09 - Rechercher / Remplacer ( sed )"
-    echo -e "- 10 - Les processus ( ps, kill, killall... )"
-    echo -e "- 11 - Bash avancé : cut, awk, which, wget, jobs...$reset_color$bold"
-    echo -e $blue"Votre choix :"$reset_color$bold
-    read
+function go(){
+    level_selected=$REPLY
     case "$REPLY" in
         1) echo -e "Vous avez choisis : Se déplacer et se retrouver\n"
             challenge="try"
-            source bots/move.sh
-        ;;         
+            source $path/bots/1move.sh
+        ;;
         2) echo -e "Vous avez choisis : Les fichiers et dossiers\n"
-            challenge="time" 
-            source bots/files.sh
+            challenge="time"
+            source $path/bots/2files.sh
         ;;
         3) echo "Vous avez choisis : Gestion des droits sur les fichiers"
-            challenge="time" 
-            source bots/permission.sh
+            challenge="time"
+            source bots/3permission.sh
         ;;
-        4) echo "Vous avez choisis : Renommer / Déplacer" 
-            challenge="force_time" 
-            source bots/rename.sh
+        4) echo "Vous avez choisis : Renommer / Déplacer"
+            challenge="force_time"
+            source bots/4rename.sh
         ;;
-        5) echo "Vous avez choisis : Télécharger" 
-            challenge="time" 
-            source bots/download.sh
+        5) echo "Vous avez choisis : Utilisez l'historique"
+            challenge="time"
+            source bots/5history.sh
         ;;
         *)
         echo "Choix pas encore disponible"
         exit
         ;;
     esac
+}
+
+function menu(){
+    echo -e "Quel robot lancer ?"
+    echo -e "Niveau 1 : "
+    echo -e "$green- 01 - Se déplacer et se retrouver ( cd , pwd, ls )"
+    echo -e "- 02 - Les fichiers et dossiers ( nano, mkdir, touch )"
+    echo -e "- 03 - Gestion des droits ( chmod , chown )"
+    echo -e "- 04 - Renommer, copier, déplacer et supprimer ( rename, cp, mv, rm )$reset_color$bold"
+    echo -e "- 05 - Utilisez l'historique pour gagner du temps ( history, flèches haut/bas, point d'exclamation)"
+    echo -e "- 06 - Rechercher dans le contenu des fichiers ou filtrer ( grep )"
+
+    echo -e "Niveau 2:"
+    echo -e "- 07 - Espace disque et mémoire vive ( df, du, free )"
+    echo -e "- 08 - Rechercher / Remplacer ( sed )"
+    echo -e "- 09 - Les processus ( ps, kill, killall... )"
+    echo -e "- 10 - Télécharger des fichiers ( wget, curl )"
+    echo -e "- 11 - Bash avancé : cut, awk, which, wget, jobs...$reset_color$bold"
+    echo -e $blue"Votre choix :"$reset_color$bold
+    read
+    if [ $REPLY -gt $level -a $level -ne 0 ]
+    then
+    	echo -e $red"Vous n'avez pas le niveau"
+    	echo -e $red"Selectionnez un niveau inferieur ou égal à "$level$reset_color$bold
+    	sleep 2
+    	menu
+    else
+	     go
+    fi
+}
+
+function verif_conf_challenge(){
+    if [ -z $challenge ]
+    then
+      echo -e $red"Il faut configurer la variable challenge pour ce bot"$reset_color$bold
+      exit
+    else
+      ask_challenge $challenge
+    fi
 }
 
 function ask_challenge(){
@@ -69,7 +94,7 @@ function ask_challenge(){
                     ;;
                     2)
                         time="3"
-                    ;;  
+                    ;;
                     3)
                         time="4"
                     ;;
@@ -93,7 +118,7 @@ function ask_challenge(){
                     ;;
                     2)
                         time="10"
-                    ;;  
+                    ;;
                     3)
                         time="30"
                     ;;
@@ -113,10 +138,10 @@ function ask_challenge(){
 }
 
 function display_consigne(){
-	echo -e $blue"$1"$reset_color$bold;
+	 echo -e $blue"$1"$reset_color$bold;
 }
 function display_warning_new_window(){
-	echo -e $red"Pour répondre à ces épreuves, il vous faut ouvrir une seconde fenêtre de terminal ou utiliser un terminal qui permet de splitter la fenetre actuelle horizontalement ou verticalement"$reset_color$bold
+	 echo -e $red"Pour répondre à ces épreuves, il vous faut ouvrir une seconde fenêtre de terminal ou utiliser un terminal qui permet de splitter la fenetre actuelle horizontalement ou verticalement"$reset_color$bold
 }
 
 function next_step(){
@@ -137,12 +162,12 @@ function next_try(){
     if [ $WARNING == "10" ]
     then
 	consigne $step
-        if [ -z $tempo ]
-        then
-            tempo=$(($time-$WARNING))
-        else
-            tempo=$(($tempo-$WARNING))
-        fi
+	if [ -z $tempo ]
+     	then
+        	tempo=$(($time-$WARNING))
+     	else
+        	tempo=$(($tempo-$WARNING))
+    	fi
     fi
 }
 

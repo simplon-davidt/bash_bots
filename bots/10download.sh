@@ -1,6 +1,6 @@
 #!/bin/bash
-
-rm -rf /tmp/site.html
+source $path/bots/reset.sh
+verif_conf_challenge
 
 display_warning_new_window
 
@@ -9,11 +9,11 @@ function consigne(){
 		1)    display_consigne "Télécharger le fichier à cette url http://localhost et le déposer dans /tmp/site.html ";
 			verif=' -f /tmp/site.html '
 		        test="search"
-        		val_test="<html>"
+        		val_test="<html"
 		        search_in="/tmp/site.html"
 		;;
-		2)    display_consigne "Aspirer ce site en entier http://localhost et le déposer dans /tmp/site/";
-			verif=" -f /tmp/site/
+		2)    display_consigne "Aspirer ce site, seulement la categorie partenaire http://simplon.co/ils-font-simplon-co-avec-nous/ et le déposer dans /tmp/site/";
+			verif=" -f /tmp/site/"
 #wget -mnp http://localhost/simplon/PHP_MYSQL/"
 		;;
 		3)    display_consigne "Déplacer le fichier /tmp/index.php en index_backup.php";
@@ -27,5 +27,3 @@ function consigne(){
 			win=true
         esac
 }
-
-
